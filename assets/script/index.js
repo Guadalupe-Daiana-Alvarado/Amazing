@@ -18,7 +18,7 @@ function createCard (evento){
           </div>
           <div class="d-flex justify-content-around align-items-center pb-3">
             <h4>Price: $${evento.price}</h4>
-            <a href="./assets/page/details.html" class="btn btn-primary">Details</a>
+            <a href="./assets/page/details.html" class="btn btn-danger">Details</a>
           </div>
         </div>`
 
