@@ -1,11 +1,10 @@
 let $containerCardPast = document.getElementById("containerCardPast")
-console.log($containerCardPast);
+//console.log($containerCardPast);
 let curren = data.currentDate
-console.log(curren);
+//console.log(curren);
 let dataEvents = data.events
-console.log(dataEvents);
-
-
+//console.log(dataEvents);
+//------------------------------//FILTRANDO LAS CARDS PASADAS//------------------------------//
 function filter (dataEvents){
     let dataEventsPast =[]
     for (const event of dataEvents) {
@@ -17,8 +16,24 @@ function filter (dataEvents){
 }
 
 let eventsPast = filter(dataEvents)
-console.log(eventsPast);
+//console.log(eventsPast);
 
+//------------------------------//FILTRANDO LAS CATEGORIAS//------------------------------//
+
+function filterCaterogory (dataEvents){
+  let categoryRepeated =[]
+  for (const event of dataEvents) {
+      categoryRepeated.push(event.category)
+  }
+return categoryRepeated
+}
+
+let categoryRepeated = filterCaterogory(dataEvents)
+//console.log(categoryRepeated);
+const categorySinRepeating = [... new Set(categoryRepeated)];
+//console.log(categorySinRepeating);
+
+//------------------------------//CREANDO CARDS//------------------------------//
 function createCard (evento){
         return ` 
         <div class="card" style="width: 18rem;">
@@ -34,59 +49,44 @@ function createCard (evento){
         </div>`
 }
 
+//------------------------------//PINTANDO CARDS//------------------------------//
 function pintCard (eventsPast, container){
   for (const dato of eventsPast) {
-    
     let templete = createCard(dato)
     container.innerHTML += templete
-  }
-  
-}
+  }}
 pintCard(eventsPast, $containerCardPast)
 
-
-let $containerCheck = document.getElementById("div-check")
-
-function filterCaterogory (dataEvents){
-  let categoryRepeated =[]
-  for (const event of dataEvents) {
-
-      categoryRepeated.push(event.category)
-       
-  }
-return categoryRepeated
-
-}
-
-let categoryRepeated = filterCaterogory(dataEvents)
-console.log(categoryRepeated);
-const categorySinRepeating = [... new Set(categoryRepeated)];
-console.log(categorySinRepeating);
- 
+//------------------------------//CREANDO CHECK//------------------------------//
+let $containerCheck = document.getElementById("div-check") 
 function createCheck (category){
   return `<div class="form-check pe-3">
   <input class="form-check-input" type="checkbox" value="${category}" name="${category}" id="${category}">
   <label class="form-check-label" for="${category}">${category}</label>  
-  </div>
-`
+  </div>`
 }
 
+//------------------------------//PINTANDO CARDS//------------------------------//
 function pintCheck (category, container){
   for (const dato of category) {
     let templete = createCheck(dato)
     container.innerHTML += templete
-    
-  }
-}
+   }}
 pintCheck( categorySinRepeating, $containerCheck)
 
 //------------------------------//ESCUCHANDO//------------------------------//
-
 let $check = document.getElementById("div-check") //ESCUCHANDO CHECK
 $check.addEventListener  ('change', ( ) => {
   dobleFiltro ()
 })
 
+const $search = document.getElementById ('search') //ESCUCHANDO SERCH
+//console.log($search);
+$search.addEventListener ('input', () => {
+  dobleFiltro ()
+})
+
+//------------------------------//FILTRANDO//------------------------------//
 function filtrarEventos(eventsPast, category) { // FILTRO CHECK
   if (category.length === 0) {
     return eventsPast;
@@ -94,24 +94,23 @@ function filtrarEventos(eventsPast, category) { // FILTRO CHECK
   return eventsPast.filter(evento => category.includes(evento.category));
 }
 
-const $search = document.getElementById ('search') //ESCUCHANDO SERCH
-  console.log($search);
-$search.addEventListener ('input', () => {
-  dobleFiltro ()
-  
-})
-
 function filtrarPorNombre (eventsPast, busqueda){ //FILTRO SERCH
-  filtradaxNombre = eventsPast.filter( item => item.name.toLowerCase().includes(busqueda.toLowerCase()))
-  console.log(filtradaxNombre);
+  filtradaxNombre = eventsPast.filter( evento => evento.name.toLowerCase().includes(busqueda.toLowerCase()))
+  //console.log(filtradaxNombre);
   return filtradaxNombre
 }
 
-function dobleFiltro() { //FILTRO DOBLE
-
-  const checkboxChecked = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(check => check.value);
+function dobleFiltro() {                       //FILTRO DOBLE
+  const categoriasSeleccionadas = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(check => check.value);
   let filtrarPorBusqueda = filtrarPorNombre(eventsPast, $search.value);
-  let filtrarCheck = filtrarEventos(filtrarPorBusqueda, checkboxChecked);
-
-  $containerCardPast.innerHTML = filtrarCheck.map(evento => createCard(evento));
-}
+  
+  if (eventsPast.length === 0) {
+    containerCardPast.innerHTML = ""; // Limpiar los resultados anteriores
+    containerCardPast.innerHTML = `<img style="width: 45vh;" src="../image/Ops.png"  alt="Error">`; //Mensaje amigaleble
+  } else if ($search.value && filtrarPorBusqueda.length === 0) {
+    containerCardPast.innerHTML = ""; // Limpiar los resultados anteriores
+    containerCardPast.innerHTML =  `<img  style="width: 45vh;"  src="../image/Ops.png"  alt="Error">`; //Mensaje amigaleble
+  } else {
+    let cruzandoFiltros = filtrarEventos(filtrarPorBusqueda, categoriasSeleccionadas);
+    containerCardPast.innerHTML = cruzandoFiltros.map(evento => createCard(evento));
+  }}
